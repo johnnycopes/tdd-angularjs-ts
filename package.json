@@ -31,6 +31,10 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "setupFiles": [
+      "./node_modules/angular/angular.js"
+    ],
+    "setupTestFrameworkScriptFile": "./node_modules/angular-mocks/angular-mocks.js"
   }
 }
