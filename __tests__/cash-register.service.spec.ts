@@ -31,7 +31,7 @@ describe("cash register service", () => {
 		}));
 	});
 
-	test("returns `status: 'INSUFFICIENT_FUNDS', change: []` if cash-in-drawer is less than change due", () => {
+	test("returns `{status: 'INSUFFICIENT_FUNDS', change: []}` if cash-in-drawer is less than change due", () => {
 		const result1 = cashRegisterService.checkCashRegister(
 			19.5, 
 			20, 
@@ -50,7 +50,7 @@ describe("cash register service", () => {
 		expect(result1).toEqual({ status: "INSUFFICIENT_FUNDS", change: [] });
 	});
 	
-	test("returns `status: 'CLOSED', change: [...]` with cash-in-drawer as the value for the key change if it is equal to the change due", () => {
+	test("returns `{status: 'CLOSED', change: [...]}` with cash-in-drawer as the value for the key change if it is equal to the change due", () => {
 		const result1 = cashRegisterService.checkCashRegister(
 			19.5, 
 			20, 
@@ -79,4 +79,22 @@ describe("cash register service", () => {
 		]});
 	});
 
+	test("return `{status: 'OPEN', change: [...]}`, with the change due in coins and bills, sorted in highest to lowest order, as the value of the change key", () => {
+		const result1 = cashRegisterService.checkCashRegister(
+			19.5, 
+			20,
+			[
+				["PENNY", 1.01], 
+				["NICKEL", 2.05], 
+				["DIME", 3.1], 
+				["QUARTER", 4.25], 
+				["ONE", 90], 
+				["FIVE", 55], 
+				["TEN", 20], 
+				["TWENTY", 60], 
+				["ONE HUNDRED", 100]
+			]
+		);
+		expect(result1).toEqual({ status: "OPEN", change: [["QUARTER", 0.5]] });
+	});
 });

@@ -26,8 +26,8 @@ class CashRegisterService {
 			change: []
 		};
 		const valueDict: {[key: string]: number} = {
-			PENNY: 0.01,
-			NICKEL: 0.05,
+			PENNY: 0.1,
+			NICKEL: 0.5,
 			DIME: 0.10,
 			QUARTER: 0.25,
 			ONE: 1,
@@ -36,32 +36,44 @@ class CashRegisterService {
 			TWENTY: 20,
 			"ONE HUNDRED": 100
 		};
-		let changeDue = cash - price;
-		let changeCollected = 0;
+		const changeDue = (cash - price) * 100;
 		const register: Register = cid.slice().reverse();
+
+		let dueRemaining = changeDue;
+		let collected = 0;
 
 		register
 			.forEach(currency => {
-				let [currencyName, currencyTotal] = currency;
-				const currencyValue = valueDict[currencyName];
+				const currencyName = currency[0];
+				const currencyValue = valueDict[currencyName] * 100;
+				let currencyTotal = currency[1] * 100;
 
-				if (currencyValue < changeDue) {
-					while(changeDue > 0 && currencyTotal > 0) {
-						changeDue -= currencyValue;
+				if (currencyValue < dueRemaining) {
+					while(dueRemaining > 0 && currencyTotal > 0) {
+						dueRemaining -= currencyValue;
 						currencyTotal -= currencyValue;
-						changeCollected += currencyValue;
+						collected += currencyValue;
 					}
 					// console.log(`
 					// ${currencyName}
-					// change due: ${changeDue}
 					// currency total: ${currencyTotal}
-					// change collected: ${changeCollected}
+					// due remaining: ${dueRemaining}
+					// collected: ${collected}
 					// `);
 				}
+
+				result.change.unshift(currency);
 			});
 
-		if (changeDue > 0) {
+		if (dueRemaining > 0) {
 			result.status = "INSUFFICIENT_FUNDS";
+			result.change = [];
+		}
+		else if (collected === changeDue) {
+			result.status = "CLOSED";
+		}
+		else {
+			result.status = "OPEN";
 		}
 
 		return result;
