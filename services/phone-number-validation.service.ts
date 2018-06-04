@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+// import * as _ from "lodash";
 import * as angular from "angular";
 angular.module("shared-services", []);
 
@@ -130,59 +130,13 @@ class PhoneNumberValidationService {
 			return false;
 		}
 
-		let hasNoParens = false;
-		let hasValidParens = false;
-		let numberChars = 10;
-		let isValidPhoneNumber = false;
-		const phoneNumberParsed = {
-			rawNumber: "",
-			parensNumber: "",
-			leftParens: 0,
-			rightParens: 0
-		};
+		const re = /(1\s?)?(\d{3}|\(\d{3}\))(-?|\s?)\d{3}(-?|\s?)\d{4}/g;
 
-		// get the numbers from the phoneNumber input
-		phoneNumberParsed.rawNumber = phoneNumber.match(/\d/g)!.join('');
-
-		// get the numbers and any parentheses from the phoneNumber input
-		phoneNumberParsed.parensNumber = phoneNumber.match(/[\d|\(*|\)*]/g)!.join('');
-
-		phoneNumberParsed.parensNumber
-			.split('')
-			.forEach(char => {
-				if (char === '(') {
-					phoneNumberParsed.leftParens++;
-				}
-				else if (char === ')') {
-					phoneNumberParsed.rightParens++;
-				}
-			});
-
-		// determine correct number of characters based on presence of country code
-		if (phoneNumberParsed.rawNumber.length === 11 && Number(phoneNumber[0]) === 1) {
-			numberChars = 11;
-		};
-
-		// determine if phone number has valid set of parentheses
-		hasNoParens =
-			phoneNumberParsed.leftParens === 0 &&
-			phoneNumberParsed.rightParens === 0
-			;
-
-		hasValidParens =
-			phoneNumberParsed.leftParens === 1 &&
-			phoneNumberParsed.rightParens === 1 &&
-			phoneNumberParsed.parensNumber[numberChars - 10] === "(" &&
-			phoneNumberParsed.parensNumber[numberChars - 6] === ")"
-			;
-
-		// using the above info, determine if phone number is valid
-		isValidPhoneNumber =
-			(hasNoParens || hasValidParens) &&
-			phoneNumberParsed.rawNumber.length === numberChars
-			;
-
-		return isValidPhoneNumber;
+		if (phoneNumber.match(re)) {
+			// ask Toby about how to not use the non-null operator (!) in TS
+			return phoneNumber.match(re)![0] === phoneNumber;
+		}
+		return false;
 	}
 }
 

@@ -51,6 +51,10 @@ describe("phone number validation service", () => {
 		const phone3 = "1(347)-705-2342";
 		const result3 = phoneNumberValidationService.validateUSphoneNumberV3(phone3);
 		expect(result3).toEqual(true);
+
+		const phone4 = "(555)5(55?)-5555"
+		const result4 = phoneNumberValidationService.validateUSphoneNumberV3(phone4);
+		expect(result4).toEqual(false);
 	});
 
 	it("should allow parentheses to wrap only the area code -- nothing else", () => {
@@ -65,6 +69,9 @@ describe("phone number validation service", () => {
 		const phone3 = "(347-705-2342)";
 		const result3 = phoneNumberValidationService.validateUSphoneNumberV3(phone3);
 		expect(result3).toEqual(false);
-	});
 
+		const phone4 = "1 555)555-5555";
+		const result4 = phoneNumberValidationService.validateUSphoneNumberV3(phone4);
+		expect(result4).toEqual(false);
+	});
 });
