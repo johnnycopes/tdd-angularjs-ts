@@ -95,7 +95,6 @@ class PhoneNumberValidationService {
 					phoneNumberParsed.rawNumber += char;
 				}
 				phoneNumberParsed.parensNumber += char;
-				return phoneNumberParsed;
 			});
 		
 		// determine correct number of characters based on presence of country code
@@ -127,7 +126,7 @@ class PhoneNumberValidationService {
 
 	// refactoring approach #3
 	public validateUSphoneNumberV3(phoneNumber: string): boolean {
-		if (typeof phoneNumber !== "string") {
+		if (typeof phoneNumber !== "string" || !phoneNumber) {
 			return false;
 		}
 
@@ -142,7 +141,13 @@ class PhoneNumberValidationService {
 			rightParens: 0
 		};
 
-		phoneNumber
+		// get the numbers from the phoneNumber input
+		phoneNumberParsed.rawNumber = phoneNumber.match(/\d/g)!.join('');
+
+		// get the numbers and any parentheses from the phoneNumber input
+		phoneNumberParsed.parensNumber = phoneNumber.match(/[\d|\(*|\)*]/g)!.join('');
+
+		phoneNumberParsed.parensNumber
 			.split('')
 			.forEach(char => {
 				if (char === '(') {
@@ -151,11 +156,6 @@ class PhoneNumberValidationService {
 				else if (char === ')') {
 					phoneNumberParsed.rightParens++;
 				}
-				else if (char !== " " && !isNaN(Number(char))) {
-					phoneNumberParsed.rawNumber += char;
-				}
-				phoneNumberParsed.parensNumber += char;
-				return phoneNumberParsed;
 			});
 
 		// determine correct number of characters based on presence of country code
